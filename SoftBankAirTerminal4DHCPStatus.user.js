@@ -50,11 +50,11 @@
     // submit処理をフック(上書き)
     dhcpData.submit = function (...args) {
 
-        // 選択中のラジオボタン取得
-        const selected = document.querySelector('input[name="dhcpstatus"]:checked');
-        if (selected) {
+        // 選択中のラジオボタンの値取得
+        const selectedValue = document.querySelector('input[name="dhcpstatus"]:checked')?.value;
+        if (selectedValue === '0' || selectedValue === '1') {
             // 設定値をDhcpStatusに設定
-            dhcpData.dhcp_value().DhcpStatus = parseInt(selected.value, 10);
+            dhcpData.dhcp_value().DhcpStatus = parseInt(selectedValue, 10);
         }
 
         // 元のsubmit処理を実行
