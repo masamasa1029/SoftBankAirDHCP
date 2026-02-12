@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SoftBank Air Terminal 4 DHCP Status
-// @version      1.1.0
+// @version      1.1.1
 // @description  SoftBank Air ターミナル4の管理画面に、DHCPサーバの有効／無効設定を追加します
 // @author       masamasa1029
 // @grant        none
