@@ -15,15 +15,7 @@ Airターミナル5以降はメーカーが違うため十中八九動かない
 ※利用は自己責任でお願いします  
 
 ## インストール
-インストール用リンク  
 <https://masamasa1029.github.io/SoftBankAirDHCP/SoftBankAirTerminal4DHCPStatus.user.js>
-
-Tampermonkeyへインストール後、[設定]タブの[ユーザーによるmatch]に下記URLを追加  
-※IPアドレスは使用してるSoftBankAirのIPアドレスを設定  
->http://\*.\*.\*.\*/html/ipadress.html  
-
-・設定例
-![設定例](images/match-setting.png)
 
 
 ## 画面サンプル
