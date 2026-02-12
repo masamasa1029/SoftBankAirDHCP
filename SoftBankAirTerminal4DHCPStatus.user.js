@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         SoftBank Air Terminal 4 DHCP Status
-// @version      1.0.1
+// @version      1.1.0
 // @description  SoftBank Air ターミナル4の管理画面に、DHCPサーバの有効／無効設定を追加します
 // @author       masamasa1029
 // @grant        none
@@ -15,36 +15,34 @@
 (function () {
     'use strict';
 
-    const main = document.querySelector('.mainContent');
-    const form = document.querySelector('form[action="IPDHCPCGI"]');
-    const dhcpData = window.DhcpHostipRangeipData;
+    // 二重実行ガード
+    if (document.getElementById('dhcp-status-extension')) return;
 
-    if (!main || !form || !dhcpData) {
-        // 必須項目がない場合は終了
-        return;
-    }
+    const main = document.querySelector('.mainContent');
+    const dhcpData = window.DhcpHostipRangeipData;
+    // 必須項目チェック
+    if (!main || !dhcpData || typeof dhcpData.dhcp_value !== 'function') return;
+
+    // 現在の設定値を取得
+    const currentStatus = String(dhcpData.dhcp_value()?.DhcpStatus);
 
     // ラジオボタン作成
-    main.insertAdjacentHTML('afterbegin',
-        `<dl class="blue">
+    const html =
+        `<dl id="dhcp-status-extension" class="blue">
     <dt>
         <span class="txt18 bold">DHCPサーバの有効／無効設定</span>
     </dt>
     <dd>
         <div class="bgcGray otherImg">
-            <input type="radio" name="dhcpstatus" value="1" id="ds01">
+            <input type="radio" name="dhcpstatus" value="1" id="ds01" ${currentStatus === '1' ? 'checked' : ''}>
             <label for="ds01">有効</label>
-            <input type="radio" name="dhcpstatus" value="0" id="ds02">
+            <input type="radio" name="dhcpstatus" value="0" id="ds02" ${currentStatus === '0' ? 'checked' : ''}>
             <label for="ds02">無効</label>
         </div>
     </dd>
-</dl>`);
+</dl>`;
+    main.insertAdjacentHTML('afterbegin', html);
 
-    // 作成したラジオボタン取得
-    const dhcpRadio = form.dhcpstatus;
-
-    // DhcpStatusをラジオボタンに反映
-    dhcpRadio.value = String(dhcpData.dhcp_value().DhcpStatus);
 
     // 元のsubmit処理を保持
     const origsubmit = dhcpData.submit;
@@ -52,8 +50,12 @@
     // submit処理をフック(上書き)
     dhcpData.submit = function (...args) {
 
-        // ラジオボタンの設定値をDhcpStatusに設定
-        dhcpData.dhcp_value().DhcpStatus = parseInt(dhcpRadio.value, 10);
+        // 選択中のラジオボタン取得
+        const selected = document.querySelector('input[name="dhcpstatus"]:checked');
+        if (selected) {
+            // 設定値をDhcpStatusに設定
+            dhcpData.dhcp_value().DhcpStatus = parseInt(selected.value, 10);
+        }
 
         // 元のsubmit処理を実行
         return origsubmit.apply(this, args);
